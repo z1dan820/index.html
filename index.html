@@ -1,113 +1,79 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Absensi Murid</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi Murid</title>
 
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #020617);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0;
-    }
-    .card {
-      background: #020617;
-      padding: 20px;
-      border-radius: 14px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 0 30px rgba(0,0,0,.6);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    input, select, button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      font-size: 14px;
-    }
-    button {
-      background: #22c55e;
-      font-weight: bold;
-      cursor: pointer;
-      color: #000;
-    }
-    .status {
-      margin-top: 12px;
-      text-align: center;
-      font-size: 14px;
-    }
-  </style>
+<style>
+body {
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+.card {
+  background: #020617;
+  padding: 20px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 420px;
+}
+input, select, button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+}
+button {
+  background: #22c55e;
+  font-weight: bold;
+}
+</style>
 </head>
+
 <body>
 
 <div class="card">
-  <h2>Absensi Murid</h2>
+<h2>Absensi Murid</h2>
 
-  <input id="sekolah" placeholder="Nama Sekolah" required>
-  <input id="guru" placeholder="Nama Guru" required>
-  <input id="kelas" placeholder="Kelas" required>
-  <input id="murid" placeholder="Nama Murid" required>
+<form 
+  action="https://script.google.com/macros/s/AKfycbyy4r54DphWlmjWIM3hg77XpVCOaxBkkC7Ia8vJRAjJAWfkF1S3f99uRHTYxXBUlUPLJQ/exec" 
+  method="POST"
+  target="hidden_iframe"
+  onsubmit="setTimeout(()=>info.innerText='✅ Absensi terkirim',500)"
+>
 
-  <select id="status">
-    <option value="Hadir">Hadir</option>
-    <option value="Izin">Izin</option>
-    <option value="Sakit">Sakit</option>
-    <option value="Alpa">Alpa</option>
-  </select>
+<input name="sekolah" placeholder="Nama Sekolah" required>
+<input name="guru" placeholder="Nama Guru" required>
+<input name="kelas" placeholder="Kelas" required>
+<input name="murid" placeholder="Nama Murid" required>
 
-  <button onclick="kirim()">KIRIM ABSENSI</button>
-  <div class="status" id="info"></div>
+<select name="status">
+  <option value="Hadir">Hadir</option>
+  <option value="Izin">Izin</option>
+  <option value="Sakit">Sakit</option>
+  <option value="Alpa">Alpa</option>
+</select>
+
+<input type="hidden" name="tanggal" id="tanggal">
+
+<button type="submit">KIRIM ABSENSI</button>
+</form>
+
+<div id="info" style="margin-top:10px;text-align:center"></div>
+
+<iframe name="hidden_iframe" style="display:none"></iframe>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzledeVk9-Ln0lzj_odmxtB2MVAIB518ABr_CKtVMDBGm3m2dUgd09IE5HJj9QZyTDyKQ/exec"
-
-function kirim() {
-  info.innerText = "⏳ Mengirim data..."
-
-  const data = {
-    sekolah: sekolah.value.trim(),
-    guru: guru.value.trim(),
-    kelas: kelas.value.trim(),
-    murid: murid.value.trim(),
-    status: status.value,
-    tanggal: new Date().toISOString().split("T")[0]
-  }
-
-  if (!data.sekolah || !data.guru || !data.kelas || !data.murid) {
-    info.innerText = "❗ Semua field wajib diisi"
-    return
-  }
-
-  fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify(data) // ⚠️ PENTING: TANPA HEADERS
-  })
-  .then(res => res.json())
-  .then(res => {
-    if (res.success) {
-      info.innerText = "✅ Absensi berhasil dikirim"
-      murid.value = ""
-    } else {
-      info.innerText = "❌ Gagal: " + (res.error || "Unknown error")
-    }
-  })
-  .catch(err => {
-    console.error(err)
-    info.innerText = "❌ Gagal koneksi"
-  })
-}
+document.getElementById("tanggal").value =
+  new Date().toISOString().split("T")[0]
 </script>
 
 </body>
