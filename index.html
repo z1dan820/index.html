@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Absensi Murid Mualimah Anis</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Murid</title>
+
   <style>
     body {
       font-family: system-ui, sans-serif;
@@ -41,9 +42,6 @@
       cursor: pointer;
       color: #000;
     }
-    button:disabled {
-      opacity: .6;
-    }
     .status {
       margin-top: 12px;
       text-align: center;
@@ -54,12 +52,12 @@
 <body>
 
 <div class="card">
-  <h2>Absensi Murid Mualimah Anis </h2>
+  <h2>Absensi Murid</h2>
 
-  <input id="sekolah" placeholder="Nama Sekolah" required />
-  <input id="guru" placeholder="Nama Guru" required />
-  <input id="kelas" placeholder="Kelas" required />
-  <input id="murid" placeholder="Nama Murid" required />
+  <input id="sekolah" placeholder="Nama Sekolah" required>
+  <input id="guru" placeholder="Nama Guru" required>
+  <input id="kelas" placeholder="Kelas" required>
+  <input id="murid" placeholder="Nama Murid" required>
 
   <select id="status">
     <option value="Hadir">Hadir</option>
@@ -77,30 +75,37 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzledeVk9-Ln0lzj_odmxtB
 
 function kirim() {
   info.innerText = "⏳ Mengirim data..."
-  
+
   const data = {
-    sekolah: sekolah.value,
-    guru: guru.value,
-    kelas: kelas.value,
-    murid: murid.value,
+    sekolah: sekolah.value.trim(),
+    guru: guru.value.trim(),
+    kelas: kelas.value.trim(),
+    murid: murid.value.trim(),
     status: status.value,
-    tanggal: new Date().toISOString().split('T')[0]
+    tanggal: new Date().toISOString().split("T")[0]
+  }
+
+  if (!data.sekolah || !data.guru || !data.kelas || !data.murid) {
+    info.innerText = "❗ Semua field wajib diisi"
+    return
   }
 
   fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify(data)
+    body: JSON.stringify(data) // ⚠️ PENTING: TANPA HEADERS
   })
   .then(res => res.json())
   .then(res => {
     if (res.success) {
       info.innerText = "✅ Absensi berhasil dikirim"
+      murid.value = ""
     } else {
-      info.innerText = "❌ Gagal menyimpan data"
+      info.innerText = "❌ Gagal: " + (res.error || "Unknown error")
     }
   })
-  .catch(() => {
-    info.innerText = "❌ Koneksi gagal"
+  .catch(err => {
+    console.error(err)
+    info.innerText = "❌ Gagal koneksi"
   })
 }
 </script>
