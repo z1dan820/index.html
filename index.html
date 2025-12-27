@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Absensi Anak Murid Mualimah Anis Cantik</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #020617);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: #020617;
+      padding: 20px;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 0 30px rgba(0,0,0,.6);
+    }
+    h2 { text-align: center; margin-bottom: 10px; }
+    input, select, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+    }
+    button {
+      background: #22c55e;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .status {
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2 id="judul">Absensi Siwa Mualimah Anis Cantik</h2>
+
+  <input id="guru" placeholder="Nama Guru" required />
+  <input id="kelas" placeholder="Kelas" required />
+  <input id="murid" placeholder="Nama Murid" required />
+
+  <select id="status">
+    <option value="Hadir">Hadir</option>
+    <option value="Izin">Izin</option>
+    <option value="Sakit">Sakit</option>
+    <option value="Alpa">Alpa</option>
+  </select>
+
+  <button onclick="kirim()">KIRIM ABSENSI</button>
+  <div class="status" id="info"></div>
+</div>
+
+<script>
+const CONFIG_URL = "https://script.google.com/macros/s/AKfycbz-9kMI_a3-VVZ4x1FIoF9FQW2gUoUGoh3KzawcxvDeCStdLPLFes417c810pWHrwXz1Q/exec"
+
+let CONFIG = {}
+
+fetch(CONFIG_URL)
+  .then(r => r.json())
+  .then(c => {
+    CONFIG = c
+    document.getElementById("judul").innerText = c.sekolah
+    if (c.status !== "aktif") {
+      document.body.innerHTML = "<h2>Sistem sedang nonaktif</h2>"
+    }
+  })
+
+function kirim() {
+  const data = {
+    guru: guru.value,
+    kelas: kelas.value,
+    murid: murid.value,
+    status: status.value,
+    tanggal: new Date().toISOString().split('T')[0]
+  }
+
+  fetch(CONFIG.api_url + "/absensi", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": CONFIG.api_key
+    },
+    body: JSON.stringify(data)
+  })
+  .then(r => r.json())
+  .then(res => {
+    info.innerText = "✅ Absensi terkirim"
+  })
+  .catch(() => {
+    info.innerText = "❌ Gagal kirim data"
+  })
+}
+</script>
+
+</body>
+</html>
